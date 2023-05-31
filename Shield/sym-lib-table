@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Shiled-rescue")(type "KiCad")(uri "${KIPRJMOD}/Shiled-rescue.kicad_sym")(options "")(descr ""))
+  (lib (name "Adafruit-TCA945a")(type "Legacy")(uri "/home/christian/Documents/encoder-logging/Shiled/Adafruit-TCA945a.lib")(options "")(descr "")(disabled))
+)
