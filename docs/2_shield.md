@@ -3,7 +3,7 @@
 The shield was designed with KiCad. All future changes to the board will be kept in KiCad.
 
 ## Design ##
-Schematic pdf can be found [here](schematic.pdf)
+Schematic pdf can be found [here](../Shield/schematic.pdf)
 
 ## BOM ##
-Bill of Materials can be found [here](shield-purchase.csv)
+Bill of Materials can be found [here](../Shield/shield-purchase.csv)
