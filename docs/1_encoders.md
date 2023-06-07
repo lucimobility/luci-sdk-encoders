@@ -85,11 +85,12 @@ How to get your contributions merged smoothly and quickly.
 
 
 ## Supported Chairs ##
-| Chair    |
-| -------- |
-| Quickie 300M  |
-| Quickie 500M  |
-| Permobil F3|
+| Chair    |  Link |
+| -------- |-----|
+| Quickie 300M  | https://github.com/lucimobility/luci-sdk-encoders/tree/main/Hardware/Quickie_300M|
+| Quickie 500M  |https://github.com/lucimobility/luci-sdk-encoders/tree/main/Hardware/Quickie_500M|
+| Permobil F3   |https://github.com/lucimobility/luci-sdk-encoders/tree/main/Hardware/Permobil_F3|
+| Permobil M3   |https://github.com/lucimobility/luci-sdk-encoders/tree/main/Hardware/Permobil_M3|
 
 
 
