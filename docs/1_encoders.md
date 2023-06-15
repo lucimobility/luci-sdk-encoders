@@ -34,56 +34,6 @@ This can be broken down into a few basic steps.
 
 Once plugged in LUCI should automatically start streaming encoder data through the luci_grpc_node in the SDK. 
 
-## Contribution guidelines ##
-This project welcomes third-party code via pull requests.
-
-You are welcome to propose and discuss enhancements using project issues.
-
-Branching Policy: The latest tag on the main branch is considered stable. The main branch is the one where all contributions must be merged before being promoted to a tagged release. If you plan to propose a patch, please commit into its own feature branch.
-
-All contributions must comply with the project's standards:
-
-Every example / source file must refer to LICENSE Every example / source file must include correct copyright notice
-
-Depending on your language used it is expected you follow one of two syling guides
-
-Python use PEP8 Standard
-C++ use clang formatting
-Please familiarize yourself with the Apache License 2.0 before contributing.
-
-When editing KiCad board files please include a summary of any components changed. Please note it is unlikely we will approve a merge of a board file change without the board having been physically tested with its changes.
-
-### How to make a new feature PR ###
-In order to get a new feature or change into the next official release please follow the steps listed below
-
-- Fork the Project
-- Create your Feature Branch (git checkout -b feature/AmazingFeature)
-- Commit your Changes (git commit -m 'Add some AmazingFeature')
-- Push to the Branch (git push origin feature/AmazingFeature)
-- Open a Pull Request
-
-### Guidelines for Pull Requests ###
-How to get your contributions merged smoothly and quickly.
-
-- Create small PRs that are narrowly focused on addressing a single concern. Create multiple PRs to address different concerns.
-
-- For speculative changes, consider opening an issue and discussing it first.
-
-- Provide a good PR description as a record of what change is being made and why it was made. Link to a GitHub issue if it exists.
-
-- If you are adding a new file, make sure it has the copyright message template at the top as a comment. You can copy over the message from an existing file and update the year.
-
-- Unless your PR is trivial, you should expect there will be reviewer comments that you'll need to address before merging. We expect you to be reasonably responsive to those comments, otherwise the PR will be closed after 2-3 weeks of inactivity.
-
-- Maintain clean commit history and use meaningful commit messages. PRs with messy commit history are difficult to review and won't be merged. Use rebase -i to curate your commit history.
-
-- Keep your PR up to date with upstream/main (if there are merge conflicts, we can't really merge your change).
-
-- Depending on the aggressiveness of a change reviewers may ask that you include unit tests to make sure there is a proper level of code coverage.
-
-- Exceptions to the rules can be made if there's a compelling reason for doing so.
-
-
 ## Supported Chairs ##
 | Chair    |  Link |
 | -------- |-----|
