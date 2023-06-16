@@ -34,6 +34,8 @@ This can be broken down into a few basic steps.
 
 Once plugged in LUCI should automatically start streaming encoder data through the luci_grpc_node in the SDK. 
 
+![Assembly](images/Encoder.png)
+
 ## Supported Chairs ##
 | Chair    |  Link |
 | -------- |-----|
