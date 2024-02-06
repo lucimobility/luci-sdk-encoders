@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <AS5600.h>
-AMS_5600 encoder;
+AS5600 encoder;
 
 #define TCAADDR 0x70
 
@@ -38,7 +38,7 @@ void setup()
         {
             if (encoder.detectMagnet())
             {
-                encoder.getMagnitude();
+                encoder.readMagnitude();
                 break;
             }
             delay(1000);
@@ -60,17 +60,21 @@ void loop()
     // Switch the decimal to the right by 2 for both wheel angles in order to send over
     // a long that includes wheel angle precision to the hundredth of a degree
     tcaselect(LEFT_WHEEL);
-    long leftWheelAng = long(convertRawAngleToDegrees(encoder.getRawAngle()) * 100);
+    long leftWheelAng = long(convertRawAngleToDegrees(encoder.rawAngle()) * 100);
+//    Serial.print("Left ");
+//    Serial.println(leftWheelAng);
     tcaselect(RIGHT_WHEEL);
-    long rightWheelAng = long(convertRawAngleToDegrees(encoder.getRawAngle()) * 100);
+    long rightWheelAng = long(convertRawAngleToDegrees(encoder.rawAngle()) * 100);
+//    Serial.print("Right ");
+//    Serial.println(rightWheelAng);
     tcaselect(FL_CASTOR);
-    int front_left_castor = int(convertRawAngleToDegrees(encoder.getRawAngle()));
+    int front_left_castor = int(convertRawAngleToDegrees(encoder.rawAngle()));
     tcaselect(BL_CASTOR);
-    int back_left_castor = int(convertRawAngleToDegrees(encoder.getRawAngle()));
+    int back_left_castor = int(convertRawAngleToDegrees(encoder.rawAngle()));
     tcaselect(FR_CASTOR);
-    int front_right_castor = int(convertRawAngleToDegrees(encoder.getRawAngle()));
+    int front_right_castor = int(convertRawAngleToDegrees(encoder.rawAngle()));
     tcaselect(BR_CASTOR);
-    int back_right_castor = int(convertRawAngleToDegrees(encoder.getRawAngle()));
+    int back_right_castor = int(convertRawAngleToDegrees(encoder.rawAngle()));
 
     // Prepare the buffer to be sent over serial to luci sensors
     // [ 1 - 9     | 10 11 12 13 | 14 15 16 17 | 18 19 | 20 21 | 22 23 | 24 25 ]
