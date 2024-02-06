@@ -49,7 +49,9 @@ void setup()
 float convertRawAngleToDegrees(unsigned int newAngle)
 {
     // 360 degrees / 4096 unique readings = 0.087890625
-    float ang = newAngle * 0.088;
+    // Karl's multiplier = 13/31
+    // 0.087890625 * Karl's multiplier = 0.0368573589
+    float ang = newAngle * 0.037;
 
     return ang;
 }
