@@ -25,7 +25,7 @@ void tcaselect(uint8_t i)
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
     while (!Serial)
     {
         // Wait for serial connection to be established
@@ -39,7 +39,7 @@ void setup()
 float convertRawAngleToDegrees(unsigned int newAngle)
 {
     // 360 degrees / 4096 unique readings = 0.087890625
-    float ang = newAngle * 0.088;
+    float ang = newAngle * 0.087890625;
     return ang;
 }
 
@@ -81,5 +81,5 @@ void loop()
 
     int bytesWritten = Serial.write(buf, sizeof(buf));
 
-    delay(50);
+    delay(10); // Max out at 100Hz
 }
