@@ -1,6 +1,6 @@
 #include <AS5600.h>
 #include <Wire.h>
-AMS_5600 encoder;
+AS5600 encoder;
 
 #define TCAADDR 0x70
 
@@ -54,12 +54,12 @@ void loop() {
   // degree
   tcaselect(LEFT_WHEEL);
   if (encoder.detectMagnet()) {
-    leftWheelAng = long(convertRawAngleToDegrees(encoder.getRawAngle()) * 100);
+    leftWheelAng = long(convertRawAngleToDegrees(encoder.rawAngle()) * 100);
   }
 
   tcaselect(RIGHT_WHEEL);
   if (encoder.detectMagnet()) {
-    rightWheelAng = long(convertRawAngleToDegrees(encoder.getRawAngle()) * 100);
+    rightWheelAng = long(convertRawAngleToDegrees(encoder.rawAngle()) * 100);
   }
   // Prepare the buffer to be sent over serial to luci sensors
   // The casters are empty in the buffer since we only are using drive motors
