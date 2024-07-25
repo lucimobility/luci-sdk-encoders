@@ -48,3 +48,6 @@ Once plugged in LUCI should automatically start streaming encoder data through t
 
 ### DISCLAIMER ### 
 These designs and files are made public for research and are NOT considered a final product or design. They are internal dev tools that LUCI uses and is willing to make public to help push advancements in the wheelchair space. As this is a public repo that hopefully benefits from third party design changes we take NO responsibility for any potential damage or malfunctions caused from these designs.
+
+### Direct Mount Design ###
+If you are using the new LUCI direct drive design please be aware that they do not currently support caster wheel encoders in the firmware.
