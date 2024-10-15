@@ -11,8 +11,8 @@ unsigned long timestamp;
 
 // Buffer to be sent over serial that luci sensors receives and parses
 // Luci sensors is looking for the tag "+AR NCDR="
-byte buf[30] = {'+', 'A', 'R', ' ', 'N', 'C', 'D', 'R', '=', 0, 0, 0, 0, 0, 0,
-                0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 0, 0, 0,0,0};
+byte buf[29] = {'+', 'A', 'R', ' ', 'N', 'C', 'D', 'R', '=', 0, 0, 0, 0, 0, 0,
+                0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 0, 0, 0,0};
 
 void tcaselect(uint8_t i) {
   if (i > 7) {
