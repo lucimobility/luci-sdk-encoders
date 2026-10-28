@@ -24,11 +24,11 @@ use embassy_usb::{Builder, UsbDevice};
 use panic_probe as _;
 use static_cell::StaticCell;
 
-/// Decoded (4x) counts per wheel revolution.
-// TODO: set from the encoder datasheet and wheel gearing once known.
-const COUNTS_PER_REV: i32 = 4096;
+/// Decoded (4x) counts per wheel revolution: 160 pole MR101 ring read by an
+/// LM13 programmed for 8 counts per pole.
+const COUNTS_PER_REV: i32 = 1280;
 /// Flip the counting direction of the left (J2) encoder.
-const LEFT_REVERSED: bool = false;
+const LEFT_REVERSED: bool = true;
 /// Flip the counting direction of the right (J3) encoder.
 const RIGHT_REVERSED: bool = false;
 
@@ -76,13 +76,47 @@ async fn heartbeat_task(mut led: Output<'static>) -> ! {
 struct Encoders {
     left: Eqdc<'static>,
     right: Eqdc<'static>,
+    /// Signal lost since the last error frame was sent.
+    left_lost: bool,
+    right_lost: bool,
+    error_cooldown: protocol::ErrorCooldown,
 }
 
 impl Encoders {
-    fn frame(&self) -> [u8; protocol::DATA_FRAME_LEN] {
+    fn new(left: Eqdc<'static>, right: Eqdc<'static>) -> Self {
+        Self {
+            left,
+            right,
+            left_lost: false,
+            right_lost: false,
+            error_cooldown: protocol::ErrorCooldown::new(),
+        }
+    }
+
+    fn frame(&self, now_ms: u32) -> [u8; protocol::DATA_FRAME_LEN] {
         let left = protocol::counts_to_centidegrees(self.left.position(), COUNTS_PER_REV);
         let right = protocol::counts_to_centidegrees(self.right.position(), COUNTS_PER_REV);
-        protocol::data_frame(left, right, Instant::now().as_millis() as u32)
+        protocol::data_frame(left, right, now_ms)
+    }
+
+    /// Error frame for encoders that lost the magnetic signal, rate limited
+    /// like the AS5600 firmware.
+    ///
+    /// An LM13 that loses the signal stops driving its outputs and counts are
+    /// lost. The receivers then hold both phases high, which is only detected
+    /// when both phases were low at that moment, so not every loss is
+    /// reported. A loss during the cooldown is reported once it ends.
+    fn error_frame(&mut self, now_ms: u32) -> Option<[u8; protocol::ERROR_FRAME_LEN]> {
+        self.left_lost |= self.left.take_phase_error();
+        self.right_lost |= self.right.take_phase_error();
+        let code = protocol::magnet_error(self.left_lost, self.right_lost)?;
+        if !self.error_cooldown.try_send(now_ms) {
+            return None;
+        }
+        warn!("signal lost: left {} right {}", self.left_lost, self.right_lost);
+        self.left_lost = false;
+        self.right_lost = false;
+        Some(protocol::error_frame(code, now_ms))
     }
 }
 
@@ -132,22 +166,22 @@ async fn main(spawner: Spawner) {
         c.reverse = reverse;
         c
     };
-    let encoders = Encoders {
-        left: unwrap!(Eqdc::new_with_index(
+    let mut encoders = Encoders::new(
+        unwrap!(Eqdc::new_with_index(
             p.EQDC0,
             p.P3_10,
             p.P3_9,
             p.P3_8,
             qdc_config(LEFT_REVERSED)
         )),
-        right: unwrap!(Eqdc::new_with_index(
+        unwrap!(Eqdc::new_with_index(
             p.EQDC1,
             p.P3_7,
             p.P1_1,
             p.P1_0,
             qdc_config(RIGHT_REVERSED)
         )),
-    };
+    );
     info!(
         "encoder inputs: left {} right {}",
         encoders.left.inputs(),
@@ -187,23 +221,41 @@ async fn main(spawner: Spawner) {
         red.set_high();
         green.set_low();
 
-        stream(&mut tx, &encoders).await;
+        stream(&mut tx, &mut encoders).await;
         info!("USB disconnected");
     }
 }
 
-/// Send a data frame every [`REPORT_PERIOD`] until the USB interface goes away.
+/// Send a data frame every [`REPORT_PERIOD`], preceded by an error frame when
+/// an encoder lost its signal, until the USB interface goes away.
 ///
 /// Like the Arduino board, frames are sent whether or not the host has
 /// asserted DTR.
-async fn stream(tx: &mut Sender<'static, UsbDriver>, encoders: &Encoders) {
+async fn stream(tx: &mut Sender<'static, UsbDriver>, encoders: &mut Encoders) {
     let mut ticker = Ticker::every(REPORT_PERIOD);
     loop {
         ticker.next().await;
-        match with_timeout(WRITE_TIMEOUT, tx.write_packet(&encoders.frame())).await {
-            Ok(Ok(())) | Err(_) => {}
-            Ok(Err(EndpointError::Disabled)) => return,
-            Ok(Err(EndpointError::BufferOverflow)) => warn!("frame larger than max packet size"),
+        let now_ms = Instant::now().as_millis() as u32;
+        if let Some(frame) = encoders.error_frame(now_ms)
+            && !send(tx, &mut ticker, &frame).await
+        {
+            return;
+        }
+        if !send(tx, &mut ticker, &encoders.frame(now_ms)).await {
+            return;
         }
     }
+}
+
+/// Send one frame. Returns `false` once the USB interface has gone away.
+async fn send(tx: &mut Sender<'static, UsbDriver>, ticker: &mut Ticker, frame: &[u8]) -> bool {
+    match with_timeout(WRITE_TIMEOUT, tx.write_packet(frame)).await {
+        Ok(Ok(())) => {}
+        // The timeout is longer than the period: drop the missed ticks
+        // instead of sending a burst of stale frames once the host reads.
+        Err(_) => ticker.reset(),
+        Ok(Err(EndpointError::Disabled)) => return false,
+        Ok(Err(EndpointError::BufferOverflow)) => warn!("frame larger than max packet size"),
+    }
+    true
 }

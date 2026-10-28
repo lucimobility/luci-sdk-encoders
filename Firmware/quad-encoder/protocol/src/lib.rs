@@ -33,6 +33,24 @@ pub const ERROR_FRAME_LEN: usize = 14;
 /// Minimum time between two error frames.
 pub const ERROR_COOLDOWN_MS: u32 = 1000;
 
+/// The left encoder lost the magnetic signal.
+pub const ERROR_LEFT_MAGNET_NOT_DETECTED: u8 = 0x03;
+/// The right encoder lost the magnetic signal.
+pub const ERROR_RIGHT_MAGNET_NOT_DETECTED: u8 = 0x04;
+/// Both encoders lost the magnetic signal.
+pub const ERROR_BOTH_MAGNETS_NOT_DETECTED: u8 = 0x05;
+
+/// Error code for encoders that lost the magnetic signal, combined into a
+/// single code when both did, like the AS5600 firmware.
+pub fn magnet_error(left: bool, right: bool) -> Option<u8> {
+    match (left, right) {
+        (true, true) => Some(ERROR_BOTH_MAGNETS_NOT_DETECTED),
+        (true, false) => Some(ERROR_LEFT_MAGNET_NOT_DETECTED),
+        (false, true) => Some(ERROR_RIGHT_MAGNET_NOT_DETECTED),
+        (false, false) => None,
+    }
+}
+
 /// Centidegrees in one full revolution.
 pub const CENTIDEGREES_PER_REV: i32 = 36_000;
 
@@ -130,6 +148,14 @@ mod tests {
             let expected = (raw as f64 * 0.087890625 * 100.0) as i32;
             assert_eq!(counts_to_centidegrees(raw, 4096), expected);
         }
+    }
+
+    #[test]
+    fn magnet_error_codes() {
+        assert_eq!(magnet_error(false, false), None);
+        assert_eq!(magnet_error(true, false), Some(0x03));
+        assert_eq!(magnet_error(false, true), Some(0x04));
+        assert_eq!(magnet_error(true, true), Some(0x05));
     }
 
     #[test]

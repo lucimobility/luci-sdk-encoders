@@ -9,11 +9,11 @@ cortex-m = { version = "0.7", features = ["critical-section-single-core"] }
 cortex-m-rt = { version = "0.7", features = ["set-sp", "set-vtor"] }
 defmt = "1.0"
 defmt-rtt = "1.0"
-embassy-executor = { version = "0.10.0", git = "https://github.com/lucimobility/embassy.git", rev = "a47627d49f3f1143ac14df6adca3c01b890dd710", features = ["platform-cortex-m", "executor-thread", "defmt"] }
-embassy-futures = { version = "0.1.2", git = "https://github.com/lucimobility/embassy.git", rev = "a47627d49f3f1143ac14df6adca3c01b890dd710" }
-embassy-mcxa = { version = "0.1.0", git = "https://github.com/lucimobility/embassy.git", rev = "a47627d49f3f1143ac14df6adca3c01b890dd710", features = ["defmt", "unstable-pac", "mcxa256"] }
-embassy-time = { version = "0.5.1", git = "https://github.com/lucimobility/embassy.git", rev = "a47627d49f3f1143ac14df6adca3c01b890dd710", features = ["defmt", "defmt-timestamp-uptime"] }
-embassy-usb = { version = "0.6.0", git = "https://github.com/lucimobility/embassy.git", rev = "a47627d49f3f1143ac14df6adca3c01b890dd710", features = ["defmt"] }
+embassy-executor = { version = "0.10.0", git = "https://github.com/lucimobility/embassy.git", rev = "f731a41bfa72a1fdb3493ae49921b179c709f3a0", features = ["platform-cortex-m", "executor-thread", "defmt"] }
+embassy-futures = { version = "0.1.2", git = "https://github.com/lucimobility/embassy.git", rev = "f731a41bfa72a1fdb3493ae49921b179c709f3a0" }
+embassy-mcxa = { version = "0.1.0", git = "https://github.com/lucimobility/embassy.git", rev = "f731a41bfa72a1fdb3493ae49921b179c709f3a0", features = ["defmt", "unstable-pac", "mcxa256"] }
+embassy-time = { version = "0.5.1", git = "https://github.com/lucimobility/embassy.git", rev = "f731a41bfa72a1fdb3493ae49921b179c709f3a0", features = ["defmt", "defmt-timestamp-uptime"] }
+embassy-usb = { version = "0.6.0", git = "https://github.com/lucimobility/embassy.git", rev = "f731a41bfa72a1fdb3493ae49921b179c709f3a0", features = ["defmt"] }
 panic-probe = { version = "1.0", features = ["print-defmt"] }
 protocol = { path = "protocol" }
 static_cell = "2.1.1"
